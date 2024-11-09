@@ -1,0 +1,11 @@
+# Ignore vscode files
+.vscode
+
+# Ignore virtual env files
+.venv
+
+# Ignore pycache
+__pycache__
+
+# Ignore all local files like results of ab tests or local development log files
+local
