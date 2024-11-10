@@ -9,7 +9,7 @@ from app.factories import ServiceFactory
 
 class ShareBaseResource(Resource):
     def __init__(self):
-         # TODO:: initialize share service here, i.e. get it from service_factory.
+        self.share_service = ServiceFactory.get_service('share_service')
         pass
 
 class ShareLinkResource(ShareBaseResource):
@@ -19,20 +19,24 @@ class ShareLinkResource(ShareBaseResource):
         schema = ShareLinkCreateSchema()
         data = schema.load(request.get_json() or {})
         
+        result = self.share_service.create_share_link(
+            video_id,
+            expires_in=data.get('expires_in')
+        )
+
         response_schema = ShareLinkResponseSchema()
         return response_schema.dump({
             'success': True,
-            'data': {
-                'video_id': video_id
-            }
+            'data': result
         })
 
 class SharedVideoResource(ShareBaseResource):
     def get(self, token):
         """Get shared video details"""
+        result = self.share_service.get_shared_video(token)
         
         response_schema = ShareLinkResponseSchema()
         return response_schema.dump({
             'success': True,
-            'data': {"something": "for now"}
+            'data': result
         })

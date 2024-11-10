@@ -34,3 +34,6 @@ class Config:
     MINIO_SECRET_KEY = os.getenv('MINIO_SECRET_KEY', 'minioadmin')
     MINIO_BUCKET_NAME = os.getenv('MINIO_BUCKET_NAME', 'videos')
 
+    # Share expiry default
+    DEFAULT_SHARE_EXPIRY = 10 # 10 mins
+    
