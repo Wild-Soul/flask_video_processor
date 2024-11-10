@@ -11,3 +11,4 @@ __pycache__
 local
 
 instance
+.DS_Store

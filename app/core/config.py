@@ -13,18 +13,18 @@ class Config:
     VALID_API_TOKENS = os.getenv('VALID_API_TOKENS', 'test-token').split(',')
 
     # Video configurations
-    MAX_FILE_SIZE_MB = 25
+    MAX_VIDEO_SIZE = 25 * 1024 * 1024 # in bytes
     MIN_VIDEO_DURATION = 5 # seconds
     MAX_VIDEO_DURATION = 300 # seconds
-    ALLOWED_VIDEOS_MIME_TYPE = ['video/mp4', 'video/quicktime']
+    ALLOWED_VIDEO_EXTENSIONS = {'mp4', 'mov', 'avi'}
 
     # DB configurations
     SQLALCHEMY_DATABASE_URI = 'sqlite:///videos.db'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # MinIO Configuration
-    MINIO_ENDPOINT = os.getenv('MINIO_ENDPOINT', 'localhost:9090')
+    MINIO_ENDPOINT = os.getenv('MINIO_ENDPOINT', 'localhost:9000')
     MINIO_ACCESS_KEY = os.getenv('MINIO_ACCESS_KEY', 'minioadmin')
     MINIO_SECRET_KEY = os.getenv('MINIO_SECRET_KEY', 'minioadmin')
-    MINIO_BUCKET = os.getenv('MINIO_BUCKET', 'videos')
+    MINIO_BUCKET_NAME = os.getenv('MINIO_BUCKET_NAME', 'videos')
 

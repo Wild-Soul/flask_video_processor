@@ -24,9 +24,9 @@ class VideoDetailsSchema(Schema):
     original_filename = fields.String(required=False)
     duration = fields.Float(required=False)
     size = fields.Int(required=False)
-    created_at = fields.DateTime(required=False)
-    metadata = fields.Dict(required=False) # any kind of meta information about the video, that we want to send.
-    url = fields.String(required=False)
+    created_at = fields.String(required=False)
+    metadata = fields.Dict(required=False)
+    url = fields.String(required=False) # incase a share link is generated.
 
 class VideoListResponseSchema(BaseResponseSchema):
     data = fields.Nested(VideoDetailsSchema, many=True)

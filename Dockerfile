@@ -4,6 +4,11 @@ ENV PYTHONUNBUFFERED 1
 ENV FLASK_APP run.py
 ENV FLASK_ENV=development
 
+# Install FFmpeg dependencies
+RUN apt-get update && apt-get install -y \
+    ffmpeg \
+    && rm -rf /var/lib/apt/lists/*  # Clean up to reduce image size
+
 WORKDIR /app
 
 COPY . /app/

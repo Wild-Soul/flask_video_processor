@@ -1,5 +1,8 @@
 from typing import Dict
 from flask import Flask
+from .services.storage_service import StorageService
+from .services.video_service import VideoService
+from .repositories.video_repository import VideoRepository
 
 class ServiceFactory:
     _instances: Dict = {}
@@ -8,9 +11,16 @@ class ServiceFactory:
     def create_services(cls, app: Flask):
         """Create all service instances with their dependencies"""
         if not cls._instances:
+            video_repo = VideoRepository()
 
-            # TODO:: Store instances of different services that are needed (singleton pattern).
+            # Create services
+            storage_service = StorageService(app.config)
+            video_service = VideoService(app.config, video_repo, storage_service)
+
+            # Store instances
             cls._instances = {
+                'storage_service': storage_service,
+                'video_service': video_service,
             }
 
         return cls._instances

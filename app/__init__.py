@@ -11,9 +11,13 @@ def create_app(config_class=Config):
     app.config.from_object(config_class)
     CORS(app)
     db.init_app(app)
+
     
     with app.app_context():
+        # Initialize services needed for this app in one place.
         ServiceFactory.create_services(app)
+        # Ensure all tables are created
+        db.create_all()
     
     # Register blueprints
     app.register_blueprint(bp_v1)

@@ -1,3 +1,4 @@
+import tempfile
 from flask import request
 from flask_restful import Resource
 from app.core.auth import require_auth
@@ -13,21 +14,26 @@ from app.factories import ServiceFactory
 
 class VideoBaseResource(Resource):
     def __init__(self):
-        # TODO:: initialize video service here, i.e. get it from service_factory.
+        self.video_service = ServiceFactory.get_service('video_service')
         pass
 
 class VideoListResource(VideoBaseResource):
     @require_auth
     def get(self):
         """Get list of all videos"""
+        # Get pagination parameters
+        page = int(request.args.get('page', 1))
+        per_page = int(request.args.get('per_page', 20))
+
+        videos = self.video_service.get_videos(page, per_page)
         schema = VideoListResponseSchema()
-        
+
         return schema.dump({
             'success': True,
-            'data': [],
-            'total': 0,
-            'page': 0,
-            'per_page': 0
+            'data': videos.items,
+            'total': videos.total,
+            'page': page,
+            'per_page': per_page
         })
 
 class VideoUploadResource(VideoBaseResource):
@@ -41,33 +47,40 @@ class VideoUploadResource(VideoBaseResource):
         if not file.filename:
             raise ValidationError('No selected file')
 
-        # Validate additional parameters
+         # Validate additional parameters
         schema = VideoUploadSchema()
         data = schema.load(request.form)
 
+        # Process the upload
+        with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
+            file.save(tmp_file.name)
+            result = self.video_service.upload_video(
+                tmp_file,
+                file.filename,
+            )
 
         response_schema = VideoResponseSchema()
         return response_schema.dump({
             'success': True,
-            'data': data
+            'data': result
         })
 
 class VideoDetailsResource(VideoBaseResource):
     @require_auth
     def get(self, video_id):
         """Get video details"""
+        video = self.video_service.get_video_details(video_id)
         schema = VideoResponseSchema()
         return schema.dump({
             'success': True,
-            'data': {
-                "something": "for now"
-            }
+            'data': video
         })
 
     @require_auth
     def delete(self, video_id):
         """Delete a video"""
-        return {'success': True, 'message': f'Video with id={video_id} deleted successfully'}, 200
+        self.video_service.delete_video(video_id)
+        return {'success': True, 'message': 'Video deleted successfully'}, 200
 
 class VideoTrimResource(VideoBaseResource):
     @require_auth
