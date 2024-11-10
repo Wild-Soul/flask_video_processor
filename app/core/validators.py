@@ -1,6 +1,7 @@
 from typing import BinaryIO
 from moviepy.editor import VideoFileClip
 from .exceptions import ValidationError
+import tempfile
 
 class VideoValidator:
     """
@@ -65,7 +66,7 @@ class VideoValidator:
                 f"File extension not allowed. Allowed extensions: {', '.join(self.allowed_extensions)}"
             )
 
-    def validate_duration(self, file: BinaryIO) -> float:
+    def validate_duration(self, stream: BinaryIO) -> float:
         """
         Validates that the video duration is within the specified minimum and maximum duration.
 
@@ -79,21 +80,27 @@ class VideoValidator:
             ValidationError: If the video duration is shorter than the minimum duration 
                              or longer than the maximum duration.
         """
-        try:
-            video = VideoFileClip(file.name)
-            duration = video.duration
+
+        with tempfile.NamedTemporaryFile(suffix='.mp4') as temp_file:
+            stream_data = stream.read()
+            temp_file.write(stream_data)
+            temp_file.flush()
             
-            if duration < self.min_duration:
-                raise ValidationError(
-                    f"Video duration ({duration}s) is less than minimum allowed ({self.min_duration}s)"
-                )
-            
-            if duration > self.max_duration:
-                raise ValidationError(
-                    f"Video duration ({duration}s) exceeds maximum allowed ({self.max_duration}s)"
-                )
-            
-            return duration
-        finally:
-            if 'video' in locals():
-                video.close()
+            try:
+                clip = VideoFileClip(temp_file.name)
+                duration = clip.duration
+                
+                stream.seek(0)  # Reset stream position
+
+                if duration < self.min_duration:
+                    raise ValidationError(
+                        f"Video duration ({duration}s) is less than minimum allowed ({self.min_duration}s)"
+                    )
+                
+                if duration > self.max_duration:
+                    raise ValidationError(
+                        f"Video duration ({duration}s) exceeds maximum allowed ({self.max_duration}s)"
+                    )
+                return duration
+            finally:
+                clip.close()

@@ -25,15 +25,15 @@ class VideoListResource(VideoBaseResource):
         page = int(request.args.get('page', 1))
         per_page = int(request.args.get('per_page', 20))
 
-        videos = self.video_service.get_videos(page, per_page)
+        response = self.video_service.get_videos(page, per_page)
         schema = VideoListResponseSchema()
 
         return schema.dump({
             'success': True,
-            'data': videos.items,
-            'total': videos.total,
-            'page': page,
-            'per_page': per_page
+            'data': response.get('data'),
+            'total': response.get('total'),
+            'page': response.get('page'),
+            'per_page': response.get('per_page')
         })
 
 class VideoUploadResource(VideoBaseResource):
@@ -49,15 +49,11 @@ class VideoUploadResource(VideoBaseResource):
 
          # Validate additional parameters
         schema = VideoUploadSchema()
+        # TODO:: add meta support
         data = schema.load(request.form)
 
         # Process the upload
-        with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
-            file.save(tmp_file.name)
-            result = self.video_service.upload_video(
-                tmp_file,
-                file.filename,
-            )
+        result = self.video_service.upload_video(file, file.filename)
 
         response_schema = VideoResponseSchema()
         return response_schema.dump({
@@ -88,11 +84,17 @@ class VideoTrimResource(VideoBaseResource):
         """Trim a video"""
         schema = VideoTrimSchema()
         data = schema.load(request.get_json())
+
+        result = self.video_service.trim_video(
+            video_id,
+            data['start_time'],
+            data['end_time']
+        )
         
         response_schema = VideoResponseSchema()
         return response_schema.dump({
             'success': True,
-            'data': data
+            'data': result
         })
 
 class VideoMergeResource(VideoBaseResource):
@@ -102,8 +104,13 @@ class VideoMergeResource(VideoBaseResource):
         schema = VideoMergeSchema()
         data = schema.load(request.get_json())
         
+        result = self.video_service.merge_videos(
+            data['video_ids'],
+            output_format=data.get('output_format', 'mp4')
+        )
+        
         response_schema = VideoResponseSchema()
         return response_schema.dump({
             'success': True,
-            'data': data
+            'data': result
         })

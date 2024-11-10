@@ -2,6 +2,7 @@ from typing import BinaryIO
 import uuid
 from minio import Minio
 from app.core.exceptions import StorageError
+from datetime import timedelta
 
 class StorageService:
     def __init__(self, config):
@@ -24,6 +25,7 @@ class StorageService:
 
     def upload_file(self, file_obj: BinaryIO, storage_path: str) -> str:
         try:
+            file_obj.seek(0, 2)
             file_size = file_obj.tell()
             file_obj.seek(0)
             
@@ -43,7 +45,7 @@ class StorageService:
         except Exception as e:
             raise StorageError(f"Failed to delete file: {str(e)}")
 
-    def get_file_url(self, storage_path: str, expires=3600) -> str:
+    def get_file_url(self, storage_path: str, expires=timedelta(seconds=600)) -> str:
         try:
             return self.client.presigned_get_object(
                 self.bucket_name,

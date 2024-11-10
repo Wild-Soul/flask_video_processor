@@ -8,10 +8,12 @@ class BaseRepository(Generic[T]):
         self.model = model
 
     def get_by_id(self, id: int) -> Optional[T]:
+        """Get a row by id, if exists"""
         return self.model.query.get(id)
-
-    def get_all(self) -> List[T]:
-        return self.model.query.all()
+    
+    def count(self) -> int:
+        """Returns count of rows in that table"""
+        return self.model.query.count()
 
     def create(self, **kwargs) -> T:
         instance = self.model(**kwargs)

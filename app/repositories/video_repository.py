@@ -11,3 +11,7 @@ class VideoRepository(BaseRepository[Video]):
 
     def get_by_storage_path(self, storage_path: str) -> Optional[Video]:
         return Video.query.filter_by(storage_path=storage_path).first()
+
+    def get_all(self, limit, offset) -> List[Video]:
+        return Video.query.limit(limit=limit).offset(offset=offset)
+    

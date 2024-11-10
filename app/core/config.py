@@ -16,7 +16,13 @@ class Config:
     MAX_VIDEO_SIZE = 25 * 1024 * 1024 # in bytes
     MIN_VIDEO_DURATION = 5 # seconds
     MAX_VIDEO_DURATION = 300 # seconds
-    ALLOWED_VIDEO_EXTENSIONS = {'mp4', 'mov', 'avi'}
+    ALLOWED_VIDEO_EXTENSIONS = {'mp4', 'webm', 'mov', 'avi'}
+    EXTENSION_CODE_MAP = {
+        'mp4': 'libx264',
+        'webm': 'libvpx',
+        'avi': 'libxvid',
+        'mov': 'prores',
+    }
 
     # DB configurations
     SQLALCHEMY_DATABASE_URI = 'sqlite:///videos.db'
