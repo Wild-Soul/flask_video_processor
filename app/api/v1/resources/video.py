@@ -1,4 +1,4 @@
-from flask import request, current_app
+from flask import request
 from flask_restful import Resource
 from app.core.auth import require_auth
 from app.core.exceptions import ValidationError
@@ -67,7 +67,7 @@ class VideoDetailsResource(VideoBaseResource):
     @require_auth
     def delete(self, video_id):
         """Delete a video"""
-        return {'success': True, 'message': 'Video deleted successfully'}, 200
+        return {'success': True, 'message': f'Video with id={video_id} deleted successfully'}, 200
 
 class VideoTrimResource(VideoBaseResource):
     @require_auth
@@ -89,13 +89,8 @@ class VideoMergeResource(VideoBaseResource):
         schema = VideoMergeSchema()
         data = schema.load(request.get_json())
         
-        result = self.video_service.merge_videos(
-            data['video_ids'],
-            output_format=data.get('output_format', 'mp4')
-        )
-        
         response_schema = VideoResponseSchema()
         return response_schema.dump({
             'success': True,
-            'data': result
+            'data': data
         })

@@ -22,9 +22,9 @@ curl -X GET http://localhost:5000/api/v1/videos \
 
 - POST /api/v1/videos/upload
 ```
-curl -X POST http://localhost:5000/api/v1/videos/upload \
-  -H "Authorization: Bearer test-token" \
-  -F "file=@/path/to/your/video.mp4"
+curl --location 'http://localhost:5000/api/v1/videos/upload' \
+  --header 'Authorization: Bearer test-token' \
+  --form 'video=@"/absolure/path/to/video.mp4"'
 ```
 
 - GET /api/v1/videos/<video_id>
@@ -43,8 +43,22 @@ curl -X POST http://localhost:5000/api/v1/videos/<video_id>/trim \
 
 - POST /api/v1/videos/merge
 ```
-curl -X POST http://localhost:5000/api/v1/videos/merge \
-  -H "Authorization: Bearer test-token" \
-  -F "file1=@/path/to/video1.mp4" \
-  -F "file2=@/path/to/video2.mp4"
+curl --location 'http://localhost:5000/api/v1/videos/merge' \
+  --header 'Content-Type: application/json' \
+  --header 'Authorization: Bearer test-token' \
+  --data '{
+      "video_ids": ["video1", "video2", "video3"]
+  }'
+```
+
+- POST /api/v1/videos/<video_id>/share
+```
+curl -X POST http://localhost:5000/api/v1/videos/<video_id>/share \
+  -H "Authorization: Bearer test-token"
+```
+
+- GET /share/<token>
+```
+curl -X GET http://localhost:5000/share/<token> \
+  -H "Authorization: Bearer test-token"
 ```

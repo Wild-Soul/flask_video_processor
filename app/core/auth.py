@@ -4,7 +4,6 @@ from .exceptions import AuthenticationError
 
 def validate_token(token: str) -> bool:
     """Validate API token against configured tokens"""
-    print("CURRENT APP CONFIG::", current_app.config.keys())
     valid_tokens = current_app.config['VALID_API_TOKENS']
     return token in valid_tokens
 

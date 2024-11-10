@@ -14,12 +14,12 @@ class VideoTrimSchema(Schema):
 
 class VideoMergeSchema(Schema):
     # TODO:: Add validation, there should at-least be two ids to merge
-    video_ids = fields.List(fields.UUID(), required=True)
+    video_ids = fields.List(fields.String(), required=True)
     output_format = fields.String(required=False, missing='mp4')
 
 class VideoDetailsSchema(Schema):
     # WIP:: TODO:: Setting required to false for all fields, but that shouldn't be the case.
-    id = fields.Int(required=False)
+    id = fields.String(required=False)
     filename = fields.String(required=False)
     original_filename = fields.String(required=False)
     duration = fields.Float(required=False)
