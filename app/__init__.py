@@ -1,15 +1,21 @@
-from flask import Flask, jsonify
-from flask_sqlalchemy import SQLAlchemy
-from app.config import Config
-
-db = SQLAlchemy()
+from flask import Flask
+from flask_cors import CORS
+from app.core.config import Config
+from .extensions import db
+from .api.v1.routes import bp_v1
+from .factories import ServiceFactory
 
 def create_app(config_class=Config):
     app = Flask(__name__)
+    
     app.config.from_object(config_class)
+    CORS(app)
     db.init_app(app)
-
-    from app.api import api_bp
-    app.register_blueprint(api_bp, url_prefix='/api')
-
+    
+    with app.app_context():
+        ServiceFactory.create_services(app)
+    
+    # Register blueprints
+    app.register_blueprint(bp_v1)
+    
     return app
