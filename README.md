@@ -70,3 +70,8 @@ client <-> server <-> minio
   - ideally we should be offloading video processing task to background worker through message queue.
   - this will decouple the API and worker and each can be individually scaled.
   - it'll also allow up to setup retry/DLQ.
+
+# References:
+- [Flask + marshmallow + swagger](https://medium.com/@adeesh999/marshmallow-flask-swagger-21764b432a55)
+- [Flask + minio](https://medium.com/data-engineering-indonesia/how-to-upload-files-from-flask-to-minio-on-docker-14aade73596f)
+- [Flask + SQLAlchemy](https://www.digitalocean.com/community/tutorials/how-to-use-flask-sqlalchemy-to-interact-with-databases-in-a-flask-application)
