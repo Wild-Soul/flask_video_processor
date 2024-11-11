@@ -38,6 +38,7 @@ GET    /api/v1/share/<token>       - Access shared video
 - install requirements ```pip install -r requirements.txt```
 - make sure ffmpeg is installed in your system
 - start development server: ```python run.py```
+- start production server: ```gunicorn wsgi:app --bind=0.0.0.0:5000```
 
 ## Runningn using docker
 - requires docker
