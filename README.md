@@ -59,7 +59,7 @@ For this project we'll need to create "videos" bucket manually for now, but it c
 
 - Running tests
 ```
-pytest
+pytest --maxfail=1 --disable-warnings -v
 ```
 - Testing routes for handling multiple requests. [ref](https://stackoverflow.com/questions/46362284/run-multiple-curl-commands-in-parallel):
 ```

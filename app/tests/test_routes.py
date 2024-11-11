@@ -64,3 +64,30 @@ def test_video_merge(client, valid_auth_header, mock_minio):
     assert response.json['success'] is True
     assert 'data' in response.json
     assert 'filename' in response.json['data']
+
+
+# Test share routes.
+
+def test_create_share_link(client, valid_auth_header, mock_minio):
+    """Test generating a share link for a video."""
+    data = {
+        'expires_in': 3600
+    }
+    response = client.post('/api/v1/videos/1/share', json=data, headers=valid_auth_header)
+
+    assert response.status_code == 200
+    assert response.json['success'] is True
+    assert 'data' in response.json
+    assert 'token' in response.json['data']
+    return response.json['data']['token']
+
+def test_get_shared_video(client,valid_auth_header,  mock_minio):
+    """Test retrieving a shared video using a share token."""
+    token = test_create_share_link(client, valid_auth_header, mock_minio)
+    response = client.get('/api/v1/share/token', headers=valid_auth_header)
+
+    assert response.status_code == 200
+    assert response.json['success'] is True
+    assert 'data' in response.json
+    assert 'video_id' in response.json['data']
+    assert 'url' in response.json['data']
