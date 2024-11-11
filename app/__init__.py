@@ -1,8 +1,10 @@
 from flask import Flask
 from flask_cors import CORS
+from flask_apispec.extension import FlaskApiSpec
+
 from app.core.config import Config
 from .extensions import db
-from .api.v1.routes import bp_v1
+from .api.v1.routes import bp_v1, register_docs
 from .factories import ServiceFactory
 
 def create_app(config_class=Config):
@@ -18,8 +20,10 @@ def create_app(config_class=Config):
         ServiceFactory.create_services(app)
         # Ensure all tables are created
         db.create_all()
-    
-    # Register blueprints
-    app.register_blueprint(bp_v1)
+        # Register blueprints
+        app.register_blueprint(bp_v1)
+        # Create swagger docs
+        docs = FlaskApiSpec(app)
+        register_docs(docs)    
     
     return app
