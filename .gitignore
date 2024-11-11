@@ -10,7 +10,6 @@ __pycache__
 # Ignore all local files like results of ab tests or local development log files
 local
 
-instance
 .DS_Store
 
 test_video.mp4
