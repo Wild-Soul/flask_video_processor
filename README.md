@@ -1,3 +1,48 @@
+# About
+Key features of this API layer:
+
+1. Versioned API routes (v1)
+2. Schema validation using marshmallow
+3. RESTful resource organization
+4. Swagger/OpenAPI documentation
+5. Authentication middleware
+6. Response formatting consistency
+7. CORS support
+8. Factory pattern for app creation
+
+The API endpoints follow REST conventions:
+
+```
+GET    /api/v1/videos              - List all videos
+POST   /api/v1/videos/upload       - Upload a new video
+GET    /api/v1/videos/<id>         - Get video details
+DELETE /api/v1/videos/<id>         - Delete a video
+POST   /api/v1/videos/<id>/trim    - Trim a video
+POST   /api/v1/videos/merge        - Merge multiple videos
+POST   /api/v1/videos/<id>/share   - Create share link
+GET    /api/v1/share/<token>       - Access shared video
+```
+
+
+# Setup
+- Pre-requisites:
+  - minio
+    - a bucket named "videos" in minio
+  - ffmpeg
+
+## How to setup locally
+- make a virutal python env ```python -m venv .venv``
+- activate it ```source .venv/bin/activate```
+- install requirements ```pip install -r requirements.txt```
+- make sure ffmpeg is installed in your system
+- start development server: ```python run.py```
+
+## Runningn using docker
+- requires docker
+- docker compose
+  - ```docker-compose up```
+- create a new bucket **videos** after logging into minio at ```localhost:9000```
+
 ### How to spin up just minio
 Run the below command from root of the project. This will spin up the minio container in detached and tty session mode [ref](https://min.io/docs/minio/container/index.html)
 ```
@@ -12,53 +57,15 @@ docker run \
 
 For this project we'll need to create "videos" bucket manually for now, but it can be automated to certain extent.
 
-### Curl requests for different routes
-
-- GET /api/v1/videos
+# Current architecture:
+- a very simple overview:
 ```
-curl -X GET http://localhost:5000/api/v1/videos \
-  -H "Authorization: Bearer test-token"
+client <-> server <-> minio
+                  <-> sqlite
 ```
-
-- POST /api/v1/videos/upload
-```
-curl --location 'http://localhost:5000/api/v1/videos/upload' \
-  --header 'Authorization: Bearer test-token' \
-  --form 'video=@"/absolure/path/to/video.mp4"'
-```
-
-- GET /api/v1/videos/<video_id>
-```
-curl -X GET http://localhost:5000/api/v1/videos/<video_id> \
-  -H "Authorization: Bearer test-token"
-```
-
-- POST /api/v1/videos/<video_id>/trim
-```
-curl -X POST http://localhost:5000/api/v1/videos/<video_id>/trim \
-  -H "Authorization: Bearer test-token" \
-  -H "Content-Type: application/json" \
-  -d '{"start_time": "00:01:00", "end_time": "00:05:00"}'
-```
-
-- POST /api/v1/videos/merge
-```
-curl --location 'http://localhost:5000/api/v1/videos/merge' \
-  --header 'Content-Type: application/json' \
-  --header 'Authorization: Bearer test-token' \
-  --data '{
-      "video_ids": ["video1", "video2", "video3"]
-  }'
-```
-
-- POST /api/v1/videos/<video_id>/share
-```
-curl -X POST http://localhost:5000/api/v1/videos/<video_id>/share \
-  -H "Authorization: Bearer test-token"
-```
-
-- GET /share/<token>
-```
-curl -X GET http://localhost:5000/share/<token> \
-  -H "Authorization: Bearer test-token"
-```
+- currently video processing happens synchronously, which can take time.
+  - for small videos (35 MB max) it might be fast/quick, but as the size grows this approach/setup won't work.
+  - ideally we should be offloading video processing task to background worker through message queue.
+  - this will decouple the API and worker and each can be individually scaled.
+  - it'll also allow up to setup retry/DLQ.
+  
