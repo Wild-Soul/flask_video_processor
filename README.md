@@ -23,6 +23,8 @@ POST   /api/v1/videos/<id>/share   - Create share link
 GET    /api/v1/share/<token>       - Access shared video
 ```
 
+- swagger ui:
+  - ```http://localhost:<port[5000]>/swagger-ui```
 
 # Setup
 - Pre-requisites:
@@ -68,4 +70,3 @@ client <-> server <-> minio
   - ideally we should be offloading video processing task to background worker through message queue.
   - this will decouple the API and worker and each can be individually scaled.
   - it'll also allow up to setup retry/DLQ.
-  
