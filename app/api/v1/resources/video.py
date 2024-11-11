@@ -97,15 +97,13 @@ class VideoTrimResource(VideoBaseResource):
     @use_kwargs(VideoTrimSchema)
     @marshal_with(VideoResponseSchema)
     @marshal_with(VideoBaseResource)
-    def post(self, video_id):
+    def post(self, video_id, start_time, end_time):
         '''Trim a video'''
-        schema = VideoTrimSchema()
-        data = schema.load(request.get_json())
 
         result = self.video_service.trim_video(
             video_id,
-            data['start_time'],
-            data['end_time']
+            start_time,
+            end_time
         )
         
         response_schema = VideoResponseSchema()
@@ -120,14 +118,12 @@ class VideoMergeResource(VideoBaseResource):
     @use_kwargs(VideoMergeSchema)
     @marshal_with(VideoResponseSchema)
     @marshal_with(VideoBaseResource)
-    def post(self):
+    def post(self, video_ids, output_format):
         '''Merge multiple videos'''
-        schema = VideoMergeSchema()
-        data = schema.load(request.get_json())
         
         result = self.video_service.merge_videos(
-            data['video_ids'],
-            output_format=data.get('output_format', 'mp4')
+            video_ids,
+            output_format
         )
         
         response_schema = VideoResponseSchema()

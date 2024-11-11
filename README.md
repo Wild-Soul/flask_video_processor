@@ -22,7 +22,8 @@ POST   /api/v1/videos/merge        - Merge multiple videos
 POST   /api/v1/videos/<id>/share   - Create share link
 GET    /api/v1/share/<token>       - Access shared video
 ```
-
+- For dependencies take a look at ```requirements.txt```
+- Language version: Python3.12
 - swagger ui:
   - ```http://localhost:<port[5000]>/swagger-ui```
 
@@ -40,12 +41,6 @@ GET    /api/v1/share/<token>       - Access shared video
 - start development server: ```python run.py```
 - start production server: ```gunicorn wsgi:app --bind=0.0.0.0:5000```
 
-## Runningn using docker
-- requires docker
-- docker compose
-  - ```docker-compose up```
-- create a new bucket **videos** after logging into minio at ```localhost:9000```
-
 ### How to spin up just minio
 Run the below command from root of the project. This will spin up the minio container in detached and tty session mode [ref](https://min.io/docs/minio/container/index.html)
 ```
@@ -59,6 +54,19 @@ docker run \
 ```
 
 For this project we'll need to create "videos" bucket manually for now, but it can be automated to certain extent.
+
+# Testing
+
+- Running tests
+```
+pytest
+```
+- Testing routes for handling multiple requests. [ref](https://stackoverflow.com/questions/46362284/run-multiple-curl-commands-in-parallel):
+```
+seq 1 100 | xargs -n1 -P10 curl --location 'http://localhost:8000/api/v1/videos/upload' \
+--header 'Authorization: Bearer test-token' \
+--form 'video=@"/absoute/path/to/your/video.mp4"'
+```
 
 # Current architecture:
 - a very simple overview:

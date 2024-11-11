@@ -1,6 +1,6 @@
 from typing import BinaryIO
 from moviepy.editor import VideoFileClip
-from .exceptions import ValidationError
+from .exceptions import ValidationError, VideoProcessingError
 import tempfile
 
 class VideoValidator:
@@ -102,5 +102,10 @@ class VideoValidator:
                         f"Video duration ({duration}s) exceeds maximum allowed ({self.max_duration}s)"
                     )
                 return duration
+            except Exception as e:
+                print("EXCEPTION::", e)
+                raise VideoProcessingError(
+                    f"Erorr while getting video duration: ${str(e)}"
+                )
             finally:
                 clip.close()
