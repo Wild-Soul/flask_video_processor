@@ -34,6 +34,7 @@ class ShareLinkResource(ShareBaseResource):
             'data': result
         })
 
+@doc(tags=['Share'])
 class SharedVideoResource(ShareBaseResource):
     @require_auth
     @doc(description='Get presigned url for previously shared video.')

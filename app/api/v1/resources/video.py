@@ -12,10 +12,11 @@ from app.schemas.video import (
     VideoResponseSchema
 )
 from app.factories import ServiceFactory
+from app.services.video_service import VideoService
 
 class VideoBaseResource(Resource, MethodResource):
     def __init__(self):
-        self.video_service = ServiceFactory.get_service('video_service')
+        self.video_service: VideoService = ServiceFactory.get_service('video_service')
         pass
 
 @doc(tags=['Videos'])
@@ -42,6 +43,7 @@ class VideoListResource(VideoBaseResource):
             'per_page': response.get('per_page')
         })
 
+@doc(tags=['Videos'])
 class VideoUploadResource(VideoBaseResource):
     @require_auth
     @doc(description='Upload a new video file')
@@ -71,6 +73,7 @@ class VideoUploadResource(VideoBaseResource):
             'data': result
         })
 
+@doc(tags=['Videos'])
 class VideoDetailsResource(VideoBaseResource):
     @require_auth
     @doc(description='Get video details')
@@ -91,6 +94,7 @@ class VideoDetailsResource(VideoBaseResource):
         self.video_service.delete(video_id)
         return {'success': True, 'message': 'Video deleted successfully'}, 200
 
+@doc(tags=['Videos'])
 class VideoTrimResource(VideoBaseResource):
     @require_auth
     @doc(description='Trim a video')
@@ -112,6 +116,7 @@ class VideoTrimResource(VideoBaseResource):
             'data': result
         })
 
+@doc(tags=['Videos'])
 class VideoMergeResource(VideoBaseResource):
     @require_auth
     @doc(description='Merge multiple videos')

@@ -9,8 +9,8 @@ class VideoUploadSchema(Schema):
     tags = fields.List(fields.String(), required=False)
 
 class VideoListQuerySchema(Schema):
-    page = fields.Int(missing=1)
-    per_page = fields.Int(missing=20)
+    page = fields.Int(missing=1, validate=lambda n: n > 0)
+    per_page = fields.Int(missing=20, validate=lambda n: n >= 10)
 
 class VideoTrimSchema(Schema):
     start_time = fields.Float(required=True, validate=lambda n: n >= 0)

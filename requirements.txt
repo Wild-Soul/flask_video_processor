@@ -1,12 +1,17 @@
 Flask==3.0.3
+
+# Flask extensions for quickly building RESTful APIs
 Flask-SQLAlchemy==3.1.1
-pytest==8.3.3
 marshmallow==3.23.1
 Flask-RESTful==0.3.10
 Flask-Cors==5.0.0
-minio==7.2.10
-moviepy==1.0.3
 flask-apispec==0.11.4
+
+# Object storage
+minio==7.2.10
+# ffmpeg wrapper for core business logic on video editing.
+moviepy==1.0.3
+# For production grade WSGI server.
 gunicorn==23.0.0
 
 # For testing
